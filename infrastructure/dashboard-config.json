@@ -1,0 +1,11 @@
+{
+    "apiKey": "Hu52dwsas2AdxdE",
+    "node": {
+      "host":"localhost",
+      "port":"8108",
+      "protocol":"http",
+      "path":"",
+      "tls":true
+    }
+  }
+  
