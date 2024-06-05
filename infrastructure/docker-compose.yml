@@ -1,14 +1,26 @@
-version: '3.8'
+version: "3.8"
 
 services:
   typesense:
-    image: typesense/typesense:0.26.0
+    image: typesense/typesense:26.0
     container_name: typesense
     ports:
       - "8108:8108"
-    command: [ "--data-dir", "/data", "--api-key=Hu52dwsas2AdxdE" ]
+    command: ["--data-dir", "/data", "--api-key=Hu52dwsas2AdxdE"]
     volumes:
       - typesense-data:/data
+    networks:
+      - app-network
+
+  typesense-dashboard:
+    depends_on:
+      - typesense
+    image: bfritscher/typesense-dashboard:latest
+    container_name: typesense-dashboard
+    ports:
+      - "80:80"
+    volumes:
+      - ./dashboard-config.json:/srv/dashboard-config.json
     networks:
       - app-network
 
@@ -24,18 +36,6 @@ services:
       - TYPESENSE_API_KEY=Hu52dwsas2AdxdE
     depends_on:
       - typesense
-    networks:
-      - app-network
-
-  typesense-dashboard:
-    depends_on:
-      - typesense
-    image: bfritscher/typesense-dashboard:latest
-    container_name: typesense-dashboard
-    ports:
-      - "80:80"
-    volumes:
-      - ./dashboard-config.json:/srv/dashboard-config.json
     networks:
       - app-network
 
