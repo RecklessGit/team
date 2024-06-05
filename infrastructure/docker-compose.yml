@@ -35,7 +35,7 @@ services:
       - TYPESENSE_API_URL=http://typesense:8108
       - TYPESENSE_API_KEY=Hu52dwsas2AdxdE
     volumes:
-      - ./infrastructure/cards:/cards
+      - ./cards:/cards
     depends_on:
       - typesense
     networks:
