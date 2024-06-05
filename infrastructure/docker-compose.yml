@@ -18,9 +18,9 @@ services:
     image: bfritscher/typesense-dashboard:latest
     container_name: typesense-dashboard
     ports:
-      - "80:80"
+      - "8800:80"
     volumes:
-      - ./dashboard-config.json:/srv/dashboard-config.json
+      - ./dashboard-config.json:/srv/config.json
     networks:
       - app-network
 
@@ -34,6 +34,8 @@ services:
     environment:
       - TYPESENSE_API_URL=http://typesense:8108
       - TYPESENSE_API_KEY=Hu52dwsas2AdxdE
+    volumes:
+      - ./infrastructure/cards:/cards
     depends_on:
       - typesense
     networks:
