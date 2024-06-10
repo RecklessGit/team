@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  typesense:
+    image: typesense/typesense:26.0
+    container_name: typesense
+    ports:
+      - "8108:8108"
+    command: ["--data-dir", "/data", "--api-key=Hu52dwsas2AdxdE"]
+    volumes:
+      - typesense-data:/data
+    networks:
+      - app-network
+
+  typesense-dashboard:
+    depends_on:
+      - typesense
+    image: bfritscher/typesense-dashboard:latest
+    container_name: typesense-dashboard
+    ports:
+      - "8800:80"
+    volumes:
+      - ./dashboard-config.json:/srv/config.json
+    networks:
+      - app-network
+
+  typesense-seed:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - name=seed
+    container_name: typesense-seed
+    environment:
+      - TYPESENSE_API_URL=http://typesense:8108
+      - TYPESENSE_API_KEY=Hu52dwsas2AdxdE
+    volumes:
+      - ./cards:/cards
+    depends_on:
+      - typesense
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  typesense-data:

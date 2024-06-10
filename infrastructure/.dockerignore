@@ -1,0 +1,45 @@
+# Exclude the Dockerfile and docker-compose.yml
+Dockerfile
+docker-compose.yml
+
+# Ignore the config file for the dashboard (if it is generated or not needed in the image)
+dashboard-config.json
+
+# Ignore Go build artifacts
+bin/
+pkg/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.a
+*.o
+
+# Ignore directories and files created by Go tools
+cover/
+*.coverprofile
+*.cov
+*.coverage
+*.cache
+.tmp/
+
+# Ignore the node_modules directory (if applicable)
+node_modules/
+npm-debug.log
+yarn-error.log
+lerna-debug.log
+
+# Ignore MacOS and Linux file system files
+.DS_Store
+*.swp
+*.swo
+*.swn
+
+# Ignore IDE/editor specific files
+.vscode/
+.idea/
+*.iml
+
+# Ignore git files
+.git
