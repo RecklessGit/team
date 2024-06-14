@@ -1,12 +1,22 @@
 Team PDP project
 
+## Front End (2 Weeks)
 
-- Need to get the pokemon cards into Typesense correctly
-- Environment files for loading go apps
-- Small app that can read from Typesense 
-  - Fetcher 
-  - Display (No UI)
+- AG - Astro
+- GM/DM - HTMX
 
+Search and Display Pokemon
+Profile Pages
 
-- NATs
-- Typesense Fetcher Align with the Typesense server
+## Typesense Features
+
+- Auto complete
+- Injected ads
+- Geo location
+- ...
+
+## NATs
+
+- Create cluster (docker compose)
+- Typesense Fetcher Align with the Typesense server (Swap out Typesense)
+- KV storing popular Typesense
