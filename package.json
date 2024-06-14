@@ -1,0 +1,14 @@
+{
+  "name": "team",
+  "description": "",
+  "authors": "",
+  "version": "1.0.0",
+  "scripts": {
+    "astro": "pnpm --filter=astro dev\"",
+    "astro:build": "pnpm --filter=astro build",
+    "typesense": "pnpm --filter=typesense start"
+  },
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

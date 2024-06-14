@@ -1,0 +1,9 @@
+{
+  "name": "typesense",
+  "description": "Typesense infrastructure to host pokemon cards",
+  "authors": "adam gillies",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "docker-compose up --build"
+  }
+}
