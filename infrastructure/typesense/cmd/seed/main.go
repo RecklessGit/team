@@ -16,7 +16,7 @@ import (
 type Document map[string]interface{}
 
 const (
-	collectionName                  = "pokemon_cards"
+	collectionName                  = "pokemon"
 	fieldNameId                     = "id"
 	fieldNameName                   = "name"
 	fieldNameSupertype              = "supertype"
@@ -45,24 +45,31 @@ const (
 	fieldTypeArrayString = "string[]"
 	fieldTypeObject      = "object"
 	fieldTypeArrayObject = "object[]"
+
+
+)
+
+var (
+	typesenseTrue  = true
+	typesenseFalse = false
 )
 
 var fields = []api.Field{
 	// Will need to declare facet types correctly here
 	{Name: ".*", Type: "auto"},
 	//{Name: fieldNameId, Type: fieldTypeString},
-	//{Name: fieldNameName, Type: fieldTypeString},
-	//{Name: fieldNameSupertype, Type: fieldTypeString},
-	//{Name: fieldNameSubtypes, Type: fieldTypeArrayString},
+	{Name: fieldNameName, Type: fieldTypeString, Infix: &typesenseTrue, Optional: &typesenseTrue},
+	{Name: fieldNameSupertype, Type: fieldTypeString, Infix: &typesenseTrue, Optional: &typesenseTrue},
+	{Name: fieldNameSubtypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue},
 	//{Name: fieldNameLevel, Type: fieldTypeString},
 	//{Name: fieldNameHp, Type: fieldTypeString},
-	//{Name: fieldNameTypes, Type: fieldTypeArrayString},
+	{Name: fieldNameTypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue},
 	//{Name: fieldNameEvolvesFrom, Type: fieldTypeString},
 	//{Name: fieldNameEvolvesTo, Type: fieldTypeArrayString},
-	//{Name: fieldNameAbilities, Type: fieldTypeArrayObject},
-	//{Name: fieldNameAttacks, Type: fieldTypeArrayObject},
-	//{Name: fieldNameWeaknesses, Type: fieldTypeArrayObject},
-	//{Name: fieldNameResistances, Type: fieldTypeArrayObject},
+	// {Name: fieldNameAbilities, Type: fieldTypeArrayObject, Infix: &typesenseTrue},
+	// {Name: fieldNameAttacks, Type: fieldTypeArrayObject, Infix: &typesenseTrue},
+	// {Name: fieldNameWeaknesses, Type: fieldTypeArrayObject, Facet: &typesenseTrue, Optional: &typesenseFalse},
+	// {Name: fieldNameResistances, Type: fieldTypeArrayObject, Facet: &typesenseTrue, Optional: &typesenseFalse},
 	//{Name: fieldNameRetreatCost, Type: fieldTypeArrayString},
 	//{Name: fieldNameConvertedRetreatCost, Type: fieldTypeInt32},
 	//{Name: fieldNameNumber, Type: fieldTypeString},
