@@ -20,3 +20,9 @@ Profile Pages
 - Create cluster (docker compose)
 - Typesense Fetcher Align with the Typesense server (Swap out Typesense)
 - KV storing popular Typesense
+
+
+## IMGProxy
+
+Image cache 
+Image transforms

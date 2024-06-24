@@ -1,7 +1,11 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ES2022"
+    ],
     "module": "ESNext",
     "moduleResolution": "Node",
     "jsx": "react-jsx",
@@ -11,10 +15,21 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": "./",
     "paths": {
-      "~/*": ["./app/*"]
+      "~/*": [
+        "./app/*"
+      ],
+      "@ui/*": [
+        "./app/components/ui*"
+      ],
     },
-    "typeRoots": ["./node_modules/@types", "./src/types"],
-    "types": ["@remix-run/node", "vite/client"],
+    "typeRoots": [
+      "./node_modules/@types",
+      "./src/types"
+    ],
+    "types": [
+      "@remix-run/node",
+      "vite/client"
+    ],
     "noEmit": true,
     "resolveJsonModule": true
   },

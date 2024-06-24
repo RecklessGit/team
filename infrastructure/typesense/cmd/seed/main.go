@@ -45,8 +45,6 @@ const (
 	fieldTypeArrayString = "string[]"
 	fieldTypeObject      = "object"
 	fieldTypeArrayObject = "object[]"
-
-
 )
 
 var (
@@ -59,8 +57,8 @@ var fields = []api.Field{
 	{Name: ".*", Type: "auto"},
 	//{Name: fieldNameId, Type: fieldTypeString},
 	{Name: fieldNameName, Type: fieldTypeString, Infix: &typesenseTrue, Optional: &typesenseTrue},
-	{Name: fieldNameSupertype, Type: fieldTypeString, Infix: &typesenseTrue, Optional: &typesenseTrue},
-	{Name: fieldNameSubtypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue},
+	{Name: fieldNameSupertype, Type: fieldTypeString, Infix: &typesenseTrue, Optional: &typesenseTrue, Facet: &typesenseTrue},
+	{Name: fieldNameSubtypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue, Facet: &typesenseTrue},
 	//{Name: fieldNameLevel, Type: fieldTypeString},
 	//{Name: fieldNameHp, Type: fieldTypeString},
 	{Name: fieldNameTypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue},
