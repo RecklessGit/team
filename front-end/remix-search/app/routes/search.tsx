@@ -1,6 +1,7 @@
 import { json, LoaderFunctionArgs, SerializeFrom } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Hit } from 'instantsearch.js';
+import React from 'react';
 import { renderToString } from 'react-dom/server';
 import {
   getServerState,
@@ -13,8 +14,67 @@ import { PokemonCard, PokemonCardProps } from '../components/PokemonCard';
 import { SearchBox } from '../features/search/SearchBox';
 import { routing } from '../routing';
 import { typesenseEnvSchema, useTypesenseSearchClient } from '../search-client';
+import {
+  CurrentRefinementList,
+  FilterDialog,
+  RefinementList,
+} from '../components';
+import { Title } from '../components/typography';
 
-// Define Zod schema for validation
+interface SearchProps {
+  serverState?: Record<string, unknown>;
+  serverUrl: string;
+  apiKey: string;
+  nodes: { host: string; protocol: string; port: number }[];
+}
+
+const HitComponent: React.FC = () => {
+  const { results } = useInfiniteHits<Hit<PokemonCardProps>>();
+
+  return (
+    <div className="grid grid-cols-dynamic gap-3 mt-3">
+      {results?.hits.map((hit) => {
+        return <PokemonCard key={hit.objectID} {...hit} />;
+      })}
+    </div>
+  );
+};
+
+export const Search: React.FC<SearchProps> = ({
+  serverState = {},
+  serverUrl,
+  apiKey,
+  nodes,
+}) => {
+  const { searchClient } = useTypesenseSearchClient({
+    queryBy: 'name,subtypes,supertype,types',
+    apiKey,
+    nodes,
+  });
+
+  return (
+    <InstantSearchSSRProvider {...serverState}>
+      <InstantSearch
+        searchClient={searchClient}
+        indexName="pokemon"
+        routing={routing(serverUrl)}
+        future={{ preserveSharedStateOnUnmount: true }}
+      >
+        <div className="min-h-screen">
+          <div className="flex flex-col max-w-6xl mx-auto shadow-md rounded p-6 relative gap-4">
+            <Title as="h1">Pokémon Card Search</Title>
+            <SearchBox placeholder="Search for a Pokémon card..." />
+            <FilterDialog />
+            <RefinementList attribute="supertype" />
+            <CurrentRefinementList />
+            <HitComponent />
+          </div>
+        </div>
+      </InstantSearch>
+    </InstantSearchSSRProvider>
+  );
+};
+
 const RequestSchema = z.object({
   url: z.string().url(),
 });
@@ -60,54 +120,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 type LoaderData = SerializeFrom<typeof loader>;
-
-const HitComponent: React.FC = () => {
-  const { results } = useInfiniteHits<Hit<PokemonCardProps>>();
-
-  return (
-    <div className="grid grid-cols-dynamic gap-3 mt-3">
-      {results?.hits.map((hit) => {
-        return <PokemonCard key={hit.objectID} {...hit} />;
-      })}
-    </div>
-  );
-};
-
-function Search({
-  serverState = {},
-  serverUrl,
-  apiKey,
-  nodes,
-}: {
-  serverState?: Record<string, unknown>;
-  serverUrl: string;
-  apiKey: string;
-  nodes: [{ host: string; protocol: string; port: number }];
-}) {
-  const { searchClient } = useTypesenseSearchClient({
-    queryBy: 'name,subtypes,supertype,types',
-    apiKey,
-    nodes,
-  });
-  return (
-    <InstantSearchSSRProvider {...serverState}>
-      <InstantSearch
-        searchClient={searchClient}
-        indexName="pokemon"
-        routing={routing(serverUrl)}
-        future={{ preserveSharedStateOnUnmount: true }}
-      >
-        <div className="min-h-screen bg-gray-100 p-8">
-          <div className="max-w-6xl mx-auto bg-white shadow-md rounded p-6">
-            <SearchBox placeholder="Search for a Pokémon card..." />
-            <h1 className="text-2xl font-bold mb-4">Pokémon Card Search</h1>
-            <HitComponent />
-          </div>
-        </div>
-      </InstantSearch>
-    </InstantSearchSSRProvider>
-  );
-}
 
 export default function HomePage() {
   const { serverState, serverUrl, ENV } = useLoaderData<LoaderData>();

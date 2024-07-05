@@ -1,25 +1,91 @@
 import { UiState } from 'instantsearch.js';
 import { history } from 'instantsearch.js/cjs/lib/routers/index.js';
-import { RouterProps } from 'instantsearch.js/es/middlewares';
-
-type PokemonSearchState = {
-  query: string;
-  page: number;
-};
 
 type RouteState = {
   query?: string;
   page?: number;
+  subtypes?: string[];
+  supertype?: string[];
 };
 
-export function routing(serverUrl: string): RouterProps<UiState, UiState> {
+export function routing(serverUrl: string) {
   return {
-    stateMapping: {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      stateToRoute(uiState: Record<string, any>) {
+    router: history({
+      cleanUrlOnDispose: false,
+      getLocation() {
+        if (typeof window === 'undefined') {
+          return new URL(serverUrl);
+        }
+
+        return window.location;
+      },
+      createURL: ({
+        qsModule,
+        routeState,
+        location,
+      }: {
+        qsModule: any;
+        routeState: {
+          query: string;
+          page: number;
+          subtypes: string[];
+          supertype: string[];
+        };
+        location: Location;
+      }) => {
+        const urlParts = (serverUrl || location.href).match(
+          /^(.*?\/search)(\/.*)?/
+        );
+
+        const url = urlParts?.[1]?.split('?')[0] ?? './';
+
+        const urlParameters = '';
+        const queryParameters: Record<string, string | number> = {};
+
+        if (routeState.page && routeState.page !== 1) {
+          queryParameters.page = routeState.page;
+        }
+
+        if (routeState.query && routeState.query?.length > 0) {
+          queryParameters.query = routeState.query;
+        }
+        if (routeState.subtypes && routeState.subtypes?.length > 0) {
+          queryParameters.subtypes = routeState.subtypes.join(',');
+        }
+        if (routeState.supertype && routeState.supertype?.length > 0) {
+          queryParameters.supertype = routeState.supertype.join(',');
+        }
+
+        const queryString = qsModule.stringify(queryParameters, {
+          addQueryPrefix: true,
+          arrayFormat: 'repeat',
+        });
+
+        return constructEncodedURL(url, urlParameters, queryString);
+      },
+      parseURL({ qsModule, location }: { qsModule: any; location: Location }) {
+        const parse = qsModule.parse(
+          serverUrl?.split('?')?.[0] || location.search.slice(1)
+        );
+        const { query = '', page, sortBy, subtypes, supertype } = parse;
+
         return {
-          query: uiState.pokemon.query,
-          page: uiState.pokemon.page,
+          query,
+          page,
+          sortBy,
+          supertype: supertype ? supertype?.split(',') : [],
+          subtypes: subtypes ? subtypes?.split(',') : [],
+        };
+      },
+    }),
+    stateMapping: {
+      stateToRoute(uiState: UiState) {
+        const indexUiState = uiState['pokemon'] || {};
+        return {
+          query: indexUiState.query,
+          page: indexUiState.page,
+          subtypes: indexUiState?.refinementList?.subtypes || [],
+          supertype: indexUiState?.refinementList?.supertype || [],
         };
       },
       routeToState(routeState: RouteState) {
@@ -27,39 +93,24 @@ export function routing(serverUrl: string): RouterProps<UiState, UiState> {
           pokemon: {
             query: routeState.query || '',
             page: routeState.page || 1,
+            refinementList: {
+              subtypes: routeState?.subtypes || [],
+              supertype: routeState?.supertype || [],
+            },
           },
         };
       },
     },
-    router: history({
-      createURL: (state: PokemonSearchState): string => {
-        const { query, page } = state;
-        const searchParams = new URLSearchParams();
-
-        if (query?.length > 0) searchParams.set('query', query);
-        if (page > 0) searchParams.set('page', String(page));
-
-        return `${serverUrl || window.location.pathname}?${searchParams.toString()}`;
-      },
-      parseURL: () => {
-        const url =
-          typeof window === 'undefined'
-            ? new URL(serverUrl)
-            : new URL(window.location.href);
-        const searchParams = url.searchParams;
-        return {
-          query: searchParams.get('query') || '',
-          page: searchParams.get('page') ? Number(searchParams.get('page')) : 1,
-        };
-      },
-      cleanUrlOnDispose: false,
-      writeDelay: 400,
-      getLocation() {
-        if (typeof window === 'undefined') {
-          return new URL(serverUrl);
-        }
-        return window.location;
-      },
-    }),
   };
+}
+
+export function constructEncodedURL(
+  url: string,
+  urlParameters: string,
+  queryString: Record<string, string | number> | string
+) {
+  const parameterPath = urlParameters ? '/' + urlParameters : '';
+  const encodedURL = `${url}${parameterPath}${queryString ? queryString : ''}`;
+
+  return encodedURL;
 }

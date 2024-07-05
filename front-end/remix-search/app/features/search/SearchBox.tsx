@@ -3,6 +3,7 @@ import { useSearchBox } from 'react-instantsearch';
 
 interface SearchBoxProps {
   placeholder?: string;
+  showButton?: boolean;
 }
 
 const searchTips = [
@@ -12,8 +13,11 @@ const searchTips = [
   'Find Pokémon by their subtypes',
 ];
 
-export const SearchBox: React.FC<SearchBoxProps> = () => {
-  const { query, refine } = useSearchBox();
+export const SearchBox: React.FC<SearchBoxProps> = ({
+  showButton = true,
+  placeholder,
+}) => {
+  const { query, refine, clear } = useSearchBox();
   const [inputValue, setInputValue] = useState(query);
   const [tipIndex, setTipIndex] = useState(0);
 
@@ -29,14 +33,16 @@ export const SearchBox: React.FC<SearchBoxProps> = () => {
     setInputValue(e.target.value);
   };
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleFormSubmit = (
+    e: React.FormEvent<HTMLFormElement> | React.KeyboardEvent<HTMLInputElement>
+  ) => {
     e.preventDefault();
     refine(inputValue);
   };
 
   const handleClear = () => {
     setInputValue('');
-    refine('');
+    clear();
   };
 
   const handleClearKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
@@ -68,14 +74,13 @@ export const SearchBox: React.FC<SearchBoxProps> = () => {
           type="text"
           value={inputValue}
           onChange={handleInputChange}
-          onKeyPress={(e) => {
+          onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              e.preventDefault();
-              refine(inputValue);
+              handleFormSubmit(e);
             }
           }}
           className="w-full p-2 pl-10 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder={searchTips[tipIndex]}
+          placeholder={placeholder ?? searchTips[tipIndex]}
         />
         {inputValue && (
           <span
@@ -103,12 +108,14 @@ export const SearchBox: React.FC<SearchBoxProps> = () => {
           </span>
         )}
       </div>
-      <button
-        type="submit"
-        className="ml-2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      >
-        Search
-      </button>
+      {showButton && (
+        <button
+          type="submit"
+          className="ml-2 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Search
+        </button>
+      )}
     </form>
   );
 };

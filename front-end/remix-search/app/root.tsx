@@ -1,4 +1,4 @@
-import { MetaFunction } from '@remix-run/node';
+import { LinksFunction, MetaFunction } from '@remix-run/node';
 import {
   Links,
   Meta,
@@ -11,11 +11,11 @@ import {
   useRouteError,
 } from '@remix-run/react';
 import React from 'react';
-import './tailwind.css';
+import stylesheet from './tailwind.css?url';
 
-// export const links: LinksFunction = () => {
-//   return [{ rel: 'stylesheet', href: tailwindStyleSheet }];
-// };
+export const links: LinksFunction = () => [
+  { rel: 'stylesheet', href: stylesheet },
+];
 
 export async function loader() {
   return json({
@@ -57,9 +57,11 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <Layout>
-      <Outlet />
-    </Layout>
+    <React.StrictMode>
+      <Layout>
+        <Outlet />
+      </Layout>
+    </React.StrictMode>
   );
 }
 
