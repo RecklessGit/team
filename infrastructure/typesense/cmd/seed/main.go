@@ -53,15 +53,18 @@ var (
 )
 
 var fields = []api.Field{
-	// Will need to declare facet types correctly here
 	{Name: ".*", Type: "auto"},
-	//{Name: fieldNameId, Type: fieldTypeString},
 	{Name: fieldNameName, Type: fieldTypeString, Infix: &typesenseTrue, Optional: &typesenseTrue},
 	{Name: fieldNameSupertype, Type: fieldTypeString, Infix: &typesenseTrue, Optional: &typesenseTrue, Facet: &typesenseTrue},
 	{Name: fieldNameSubtypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue, Facet: &typesenseTrue},
+	{Name: fieldNameTypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue, Facet: &typesenseTrue},
+	{Name: fieldNameAttacks, Type: fieldTypeArrayObject, Optional: &typesenseTrue, Facet: &typesenseTrue},
+	{Name: fieldNameWeaknesses, Type: fieldTypeArrayObject, Optional: &typesenseTrue, Facet: &typesenseTrue},
+	{Name: fieldNameResistances, Type: fieldTypeArrayObject, Optional: &typesenseTrue, Facet: &typesenseTrue},
+	{Name: fieldNameRarity, Type: fieldTypeString, Optional: &typesenseTrue},
+	{Name: fieldNameFlavorText, Type: fieldTypeString, Optional: &typesenseTrue},
 	//{Name: fieldNameLevel, Type: fieldTypeString},
 	//{Name: fieldNameHp, Type: fieldTypeString},
-	{Name: fieldNameTypes, Type: fieldTypeArrayString, Infix: &typesenseTrue, Optional: &typesenseTrue},
 	//{Name: fieldNameEvolvesFrom, Type: fieldTypeString},
 	//{Name: fieldNameEvolvesTo, Type: fieldTypeArrayString},
 	// {Name: fieldNameAbilities, Type: fieldTypeArrayObject, Infix: &typesenseTrue},
@@ -101,7 +104,12 @@ func main() {
 		schema := &api.CollectionSchema{
 			Name:               collectionName,
 			Fields:             fields,
-			EnableNestedFields: &enableNestedFields, // Enable nested fields with a pointer to a bool
+			EnableNestedFields: &enableNestedFields,
+		}
+
+		// Override the collection by deleting the existing one if it exists
+		if err := deleteCollectionIfExists(client, collectionName); err != nil {
+			return err
 		}
 
 		if err := createCollection(client, schema); err != nil {
@@ -113,10 +121,6 @@ func main() {
 			log.Fatalf("Error reading documents from directory: %v", err)
 		}
 		log.Printf("Successfully read %d documents from directory.\n", len(documents))
-
-		if err != nil {
-			return err
-		}
 
 		action := "create"
 		params := &api.ImportDocumentsParams{Action: &action}
@@ -147,14 +151,24 @@ func main() {
 func createCollection(client *typesense.Client, schema *api.CollectionSchema) error {
 	_, err := client.Collections().Create(context.Background(), schema)
 	if err != nil {
-		if apiErr, ok := err.(*typesense.HTTPError); ok && apiErr.Status == 409 {
-			log.Println("Collection already exists")
+		log.Printf("Failed to create collection: %v", err)
+		return err
+	}
+	log.Println("Collection created successfully")
+	return nil
+}
+
+func deleteCollectionIfExists(client *typesense.Client, collectionName string) error {
+	_, err := client.Collection(collectionName).Delete(context.Background())
+	if err != nil {
+		if apiErr, ok := err.(*typesense.HTTPError); ok && apiErr.Status == 404 {
+			log.Println("Collection does not exist")
 		} else {
-			log.Printf("Failed to create collection: %v", err)
+			log.Printf("Failed to delete collection: %v", err)
 			return err
 		}
 	} else {
-		log.Println("Collection created successfully")
+		log.Println("Collection deleted successfully")
 	}
 	return nil
 }

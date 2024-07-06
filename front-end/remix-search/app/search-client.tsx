@@ -69,3 +69,4 @@ export function useTypesenseSearchClient({
 
   return adapter;
 }
+
