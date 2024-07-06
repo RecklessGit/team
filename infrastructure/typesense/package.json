@@ -4,6 +4,6 @@
   "authors": "adam gillies",
   "version": "1.0.0",
   "scripts": {
-    "start": "docker-compose up --build"
+    "start": "docker-compose up --build -d"
   }
 }

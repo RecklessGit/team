@@ -8,7 +8,8 @@
     "astro:build": "pnpm --filter=astro build",
     "remix": "pnpm --filter=remix dev",
     "remix:build": "pnpm --filter=remix build",
-    "typesense": "pnpm --filter=typesense start"
+    "typesense": "pnpm --filter=typesense start",
+    "dev": "nix develop .#nix-team"
   },
   "dependencies": {
     "concurrently": "^8.2.2"
