@@ -1,6 +1,6 @@
 import { json, LoaderFunctionArgs, SerializeFrom } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { Hit } from 'instantsearch.js';
+import { Hit, UiState } from 'instantsearch.js';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import {
@@ -10,16 +10,14 @@ import {
   useInfiniteHits,
 } from 'react-instantsearch';
 import { z } from 'zod';
+import { CurrentRefinementList, FilterDialog } from '../components';
 import { PokemonCard, PokemonCardProps } from '../components/PokemonCard';
-import { SearchBox } from '../features/search/SearchBox';
-import { routing } from '../routing';
-import { typesenseEnvSchema, useTypesenseSearchClient } from '../search-client';
-import {
-  CurrentRefinementList,
-  FilterDialog,
-  RefinementList,
-} from '../components';
 import { Title } from '../components/typography';
+import { SearchBox } from '../features/search/SearchBox';
+import { COLLECTION_NAME, routing } from '../routing';
+import { typesenseEnvSchema, useTypesenseSearchClient } from '../search-client';
+import { RouterProps } from 'instantsearch.js/es/middlewares';
+import { ErrorBoundary } from '../features/search/ErrorBoundary';
 
 interface SearchProps {
   serverState?: Record<string, unknown>;
@@ -56,19 +54,16 @@ export const Search: React.FC<SearchProps> = ({
     <InstantSearchSSRProvider {...serverState}>
       <InstantSearch
         searchClient={searchClient}
-        indexName="pokemon"
-        routing={routing(serverUrl)}
+        indexName={COLLECTION_NAME}
+        routing={routing(serverUrl) as RouterProps<UiState, any>}
         future={{ preserveSharedStateOnUnmount: true }}
       >
-        <div className="min-h-screen">
-          <div className="flex flex-col max-w-6xl mx-auto shadow-md rounded p-6 relative gap-4">
-            <Title as="h1">Pokémon Card Search</Title>
-            <SearchBox placeholder="Search for a Pokémon card..." />
-            <FilterDialog />
-            <RefinementList attribute="supertype" />
-            <CurrentRefinementList />
-            <HitComponent />
-          </div>
+        <div className="flex flex-col max-w-6xl mx-auto shadow-md rounded p-6 relative gap-4">
+          <Title as="h1">Pokémon Card Search</Title>
+          <SearchBox />
+          <FilterDialog />
+          <CurrentRefinementList />
+          <HitComponent />
         </div>
       </InstantSearch>
     </InstantSearchSSRProvider>
@@ -125,17 +120,21 @@ export default function HomePage() {
   const { serverState, serverUrl, ENV } = useLoaderData<LoaderData>();
 
   return (
-    <Search
-      serverState={serverState}
-      serverUrl={serverUrl}
-      apiKey={ENV.TYPESENSE_API_KEY}
-      nodes={[
-        {
-          host: ENV.TYPESENSE_HOST,
-          port: ENV.TYPESENSE_PORT,
-          protocol: ENV.TYPESENSE_PROTOCOL,
-        },
-      ]}
-    />
+    <ErrorBoundary>
+      <div className="min-h-screen">
+        <Search
+          serverState={serverState}
+          serverUrl={serverUrl}
+          apiKey={ENV.TYPESENSE_API_KEY}
+          nodes={[
+            {
+              host: ENV.TYPESENSE_HOST,
+              port: ENV.TYPESENSE_PORT,
+              protocol: ENV.TYPESENSE_PROTOCOL,
+            },
+          ]}
+        />
+      </div>
+    </ErrorBoundary>
   );
 }

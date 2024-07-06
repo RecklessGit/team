@@ -32,8 +32,6 @@ export const PokemonCard: React.FC<PokemonCardProps> = ({
   name,
   supertype,
   subtypes = [],
-  level = '',
-  hp = '',
   types = [],
   artist = '',
   rarity = '',
@@ -46,8 +44,6 @@ export const PokemonCard: React.FC<PokemonCardProps> = ({
       {images.small && <img src={images.small} alt={name} className="mb-4" />}
       <p><strong>Supertype:</strong> {supertype}</p>
       {subtypes.length > 0 && <p><strong>Subtypes:</strong> {subtypes.join(', ')}</p>}
-      <p><strong>Level:</strong> {level}</p>
-      <p><strong>HP:</strong> {hp}</p>
       {types.length > 0 && <p><strong>Types:</strong> {types.join(', ')}</p>}
       <p><strong>Artist:</strong> {artist}</p>
       <p><strong>Rarity:</strong> {rarity}</p>

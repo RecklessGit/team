@@ -6,31 +6,43 @@ interface SearchBoxProps {
   showButton?: boolean;
 }
 
-const searchTips = [
-  'Search...',
+const SEARCH_TIPS = [
   'Search for Pokémon by name',
   'Try searching by type: Water, Fire, etc.',
-  'Find Pokémon by their subtypes',
+  'Find Pokémon by their subtypes, supertype or type...',
 ];
 
-export const SearchBox: React.FC<SearchBoxProps> = ({
-  showButton = true,
-  placeholder,
-}) => {
+export const SearchBox: React.FC<SearchBoxProps> = ({ showButton = true }) => {
   const { query, refine, clear } = useSearchBox();
   const [inputValue, setInputValue] = useState(query);
   const [tipIndex, setTipIndex] = useState(0);
+  const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTipIndex((prevIndex) => (prevIndex + 1) % searchTips.length);
+      setTipIndex((prevIndex) => {
+        return (prevIndex + 1) % SEARCH_TIPS.length;
+      });
     }, 4000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+  useEffect(() => {
+    setInputValue(query);
+  }, [query]);
+
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputValue(value);
+
+    if (value) {
+      const response = await fetch(`/autocomplete?query=${value}`);
+      const data = await response.json();
+      setSuggestions(data.suggestions);
+    } else {
+      setSuggestions([]);
+    }
   };
 
   const handleFormSubmit = (
@@ -42,12 +54,28 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
 
   const handleClear = () => {
     setInputValue('');
+    setSuggestions([]);
     clear();
   };
 
   const handleClearKeyDown = (e: React.KeyboardEvent<HTMLSpanElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       handleClear();
+    }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setInputValue(suggestion);
+    setSuggestions([]);
+    refine(suggestion);
+  };
+
+  const handleSuggestionKeyDown = (
+    e: React.KeyboardEvent<HTMLLIElement>,
+    suggestion: string
+  ) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      handleSuggestionClick(suggestion);
     }
   };
 
@@ -80,7 +108,7 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
             }
           }}
           className="w-full p-2 pl-10 pr-10 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder={placeholder ?? searchTips[tipIndex]}
+          placeholder={SEARCH_TIPS[tipIndex]}
         />
         {inputValue && (
           <span
@@ -106,6 +134,22 @@ export const SearchBox: React.FC<SearchBoxProps> = ({
               />
             </svg>
           </span>
+        )}
+        {suggestions.length > 0 && (
+          <ul className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded shadow-lg">
+            {suggestions.map((suggestion, index) => (
+              <li
+                key={index}
+                className="p-2 border-b last:border-none cursor-pointer"
+                onClick={() => handleSuggestionClick(suggestion.name)}
+                onKeyDown={(e) => handleSuggestionKeyDown(e, suggestion.name)}
+                tabIndex={0}
+                role="button"
+              >
+                {suggestion.name} {/* Customize to show relevant fields */}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
       {showButton && (

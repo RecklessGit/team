@@ -57,6 +57,7 @@ module.exports = {
       parser: '@typescript-eslint/parser',
       rules: {
         'react/display-name': 'off',
+        '@typescript-eslint/no-explicit-any': 'off', // Ignore TypeScript issues for `any`
       },
       settings: {
         'import/internal-regex': '^~/',
