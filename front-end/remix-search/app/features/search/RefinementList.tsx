@@ -19,15 +19,19 @@ export const RefinementList: React.FC<RefinementListConnectorParams> = ({
     refine(item);
   };
 
+  if (items.length === 0) {
+    return null;
+  }
+
+  const title = attribute?.split('.')?.[0];
+
   return (
-    <Accordion.Root
-      type="single"
-      collapsible
-      className="w-full"
-    >
+    <Accordion.Root type="single" collapsible className="w-full">
       <Accordion.Item value={attribute}>
         <Accordion.Trigger>
-          <Title as="h5" size="sm">{attribute?.split('.')?.[0]}</Title>
+          <Title as="h5" size="lg">
+            {title}
+          </Title>
         </Accordion.Trigger>
         <Accordion.Content>
           <ul className="flex flex-row w-100% flex-wrap gap-4 my-4">

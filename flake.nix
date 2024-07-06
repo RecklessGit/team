@@ -22,11 +22,24 @@
             pnpm
             rustc
             cargo
+            caddy
+            which
+            polkit
           ];
 
           shellHook = ''
             export PS1="\n\[\033[1;32m\][nix-team]\[\033[0m\] \[\033[1;34m\]\w\[\033[0m\] $ "
-            
+
+            # Create the sudo-caddy-wrapper script
+            echo "Creating sudo-caddy-wrapper script..."
+            cat << 'EOF' > /tmp/sudo-caddy-wrapper.sh
+            #!/bin/sh
+            CADDY_PATH=$(which caddy)
+            sudo env "PATH=$PATH" $CADDY_PATH "$@"
+            EOF
+            chmod +x /tmp/sudo-caddy-wrapper.sh
+            export PATH=/tmp:$PATH
+
             echo "Starting My Dev Environment..."
             echo "Running pnpm install..."
             pnpm install || {
@@ -38,9 +51,9 @@
               echo "pnpm typesense failed"
               exit 1
             }
-          
+
             echo "Environment setup complete. You are now in the nix-team shell."
-            
+
             echo "Nix-team shell active. Type 'exit' to leave."
           '';
         };

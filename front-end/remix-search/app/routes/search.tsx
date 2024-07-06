@@ -1,23 +1,22 @@
 import { json, LoaderFunctionArgs, SerializeFrom } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import { Hit, UiState } from 'instantsearch.js';
+import { UiState } from 'instantsearch.js';
+import { RouterProps } from 'instantsearch.js/es/middlewares';
 import React from 'react';
 import { renderToString } from 'react-dom/server';
 import {
   getServerState,
   InstantSearch,
-  InstantSearchSSRProvider,
-  useInfiniteHits,
+  InstantSearchSSRProvider
 } from 'react-instantsearch';
 import { z } from 'zod';
 import { CurrentRefinementList, FilterDialog } from '../components';
-import { PokemonCard, PokemonCardProps } from '../components/PokemonCard';
 import { Title } from '../components/typography';
+import { ErrorBoundary } from '../features/search/ErrorBoundary';
 import { SearchBox } from '../features/search/SearchBox';
+import { SearchResults } from '../features/search/SearchResults';
 import { COLLECTION_NAME, routing } from '../routing';
 import { typesenseEnvSchema, useTypesenseSearchClient } from '../search-client';
-import { RouterProps } from 'instantsearch.js/es/middlewares';
-import { ErrorBoundary } from '../features/search/ErrorBoundary';
 
 interface SearchProps {
   serverState?: Record<string, unknown>;
@@ -25,18 +24,6 @@ interface SearchProps {
   apiKey: string;
   nodes: { host: string; protocol: string; port: number }[];
 }
-
-const HitComponent: React.FC = () => {
-  const { results } = useInfiniteHits<Hit<PokemonCardProps>>();
-
-  return (
-    <div className="grid grid-cols-dynamic gap-3 mt-3">
-      {results?.hits.map((hit) => {
-        return <PokemonCard key={hit.objectID} {...hit} />;
-      })}
-    </div>
-  );
-};
 
 export const Search: React.FC<SearchProps> = ({
   serverState = {},
@@ -59,11 +46,11 @@ export const Search: React.FC<SearchProps> = ({
         future={{ preserveSharedStateOnUnmount: true }}
       >
         <div className="flex flex-col max-w-6xl mx-auto shadow-md rounded p-6 relative gap-4">
-          <Title as="h1">Pokémon Card Search</Title>
+          <Title as="h1" size="3xl">Pokémon Card Search</Title>
           <SearchBox />
           <FilterDialog />
           <CurrentRefinementList />
-          <HitComponent />
+          <SearchResults />
         </div>
       </InstantSearch>
     </InstantSearchSSRProvider>

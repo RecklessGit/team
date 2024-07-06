@@ -7,7 +7,7 @@ type RouteState = {
   [key: string]: string | number | string[] | undefined;
 };
 
-export const COLLECTION_NAME = "pokemon"
+export const COLLECTION_NAME = 'pokemon';
 
 export const REFINEMENT_ATTRIBUTES = [
   'supertype',
@@ -36,14 +36,12 @@ export function routing(serverUrl: string) {
       routeState: RouteState;
       location: Location;
     }) => {
-      const urlParts = (serverUrl || location.href).match(
-        /^(.*?\/search)(\/.*)?/
-      );
+      const urlParts = location.href.match(/^(.*?\/search)(\/.*)?/);
       const url = urlParts?.[1]?.split('?')[0] ?? './';
 
       const queryParameters: Record<string, string | number> = {};
 
-      if (routeState.page && routeState.page !== 1) {
+      if (routeState.page) {
         queryParameters.page = routeState.page;
       }
 
@@ -66,6 +64,7 @@ export function routing(serverUrl: string) {
         addQueryPrefix: true,
         arrayFormat: 'repeat',
       });
+
 
       return constructEncodedURL(url, '', queryString);
     },
@@ -111,9 +110,9 @@ export function routing(serverUrl: string) {
       const refinementList: Record<string, string[]> = {};
 
       REFINEMENT_ATTRIBUTES.forEach((attribute) => {
-        refinementList[attribute] = routeState[attribute] as string[] || [];
+        refinementList[attribute] = (routeState[attribute] as string[]) || [];
       });
-      
+
       return {
         pokemon: {
           query: routeState.query || '',
@@ -130,7 +129,7 @@ export function routing(serverUrl: string) {
 export function constructEncodedURL(
   url: string,
   urlParameters: string,
-  queryString: Record<string, string | number> | string
+  queryString: string,
 ) {
   const parameterPath = urlParameters ? '/' + urlParameters : '';
   const encodedURL = `${url}${parameterPath}${queryString ? queryString : ''}`;

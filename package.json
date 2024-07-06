@@ -6,7 +6,7 @@
   "scripts": {
     "astro": "pnpm --filter=astro dev\"",
     "astro:build": "pnpm --filter=astro build",
-    "remix": "pnpm --filter=remix dev",
+    "remix": "pnpm --filter=remix https-dev",
     "remix:build": "pnpm --filter=remix build",
     "typesense": "pnpm --filter=typesense start",
     "dev": "nix develop .#nix-team"

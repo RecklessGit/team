@@ -1,9 +1,9 @@
 import React from 'react';
 
 export interface PokemonCardProps {
-  id: string;
-  name: string;
-  supertype: string;
+  id?: string;
+  name?: string;
+  supertype?: string;
   subtypes?: string[];
   level?: string;
   hp?: string;
@@ -26,28 +26,22 @@ export interface PokemonCardProps {
     small: string;
     large: string;
   };
+  height?: number;
+  width?: string | number;
 }
 
 export const PokemonCard: React.FC<PokemonCardProps> = ({
   name,
-  supertype,
-  subtypes = [],
-  types = [],
-  artist = '',
-  rarity = '',
-  flavor_text = '',
   images = { small: '', large: '' },
+  height,
+  width,
 }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded p-4 mb-4 w-max">
-      <h2 className="text-xl font-bold mb-2">{name}</h2>
-      {images.small && <img src={images.small} alt={name} className="mb-4" />}
-      <p><strong>Supertype:</strong> {supertype}</p>
-      {subtypes.length > 0 && <p><strong>Subtypes:</strong> {subtypes.join(', ')}</p>}
-      {types.length > 0 && <p><strong>Types:</strong> {types.join(', ')}</p>}
-      <p><strong>Artist:</strong> {artist}</p>
-      <p><strong>Rarity:</strong> {rarity}</p>
-      {flavor_text && <p><strong>Flavor Text:</strong> {flavor_text}</p>}
-    </div>
+    <img
+      src={images.small}
+      alt={name}
+      className="mb-4 object-contain"
+      style={{ height: height, width: width }}
+    />
   );
 };
