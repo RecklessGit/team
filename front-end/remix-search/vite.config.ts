@@ -29,6 +29,7 @@ export default defineConfig({
     },
   },
   server: {
+    host: process.env.APP_URL || 'localhost',
     watch: {
       // Watch for changes in the following directories
       // This is useful if you are using a monorepo setup or have custom paths

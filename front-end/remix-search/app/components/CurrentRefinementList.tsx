@@ -21,6 +21,14 @@ const RefinementsList: React.FC<CurrentRefinementListProps> = (props) => {
     [refine]
   );
 
+  const clearAllRefinements = () => {
+    items.forEach((item) => {
+      item.refinements.forEach((refinement) => {
+        refine(refinement);
+      });
+    });
+  };
+
   if (items.length === 0) {
     return null;
   }
@@ -28,29 +36,37 @@ const RefinementsList: React.FC<CurrentRefinementListProps> = (props) => {
   return (
     <div>
       <Title as="h3">Selected</Title>
-      <ul className="flex flex-row w-full flex-wrap gap-4 my-4">
-        {items.map((item) =>
-          item.refinements.map((inner) => {
-            const dataTestId = `${inner.attribute.toLowerCase().replace(/\s/g, '-')}`;
-            return (
-              <li key={inner.label} className="flex items-center">
-                <Toggle.Root
-                  size="lg"
-                  aria-label={`Toggle ${inner.label}`}
-                  onClick={() => onClickHandler(inner)}
-                  className="w-max bg-primary-400 px-4 flex items-center capitalize"
-                  data-testid={`${dataTestId}-item`}
-                >
-                  {inner.attribute}: {inner.label}
-                  <Toggle.Icon className="ml-2 capitalize">
-                    <XCircleIcon />
-                  </Toggle.Icon>
-                </Toggle.Root>
-              </li>
-            );
-          })
-        )}
-      </ul>
+      <div className="flex gap-2 mt-2">
+        <button
+          onClick={clearAllRefinements}
+          className="bg-red-500 text-white px-4 rounded-lg align-middle h-min py-2"
+        >
+          Reset
+        </button>
+        <ul className="flex flex-row w-full flex-wrap gap-">
+          {items.map((item) =>
+            item.refinements.map((inner) => {
+              const dataTestId = `${inner.attribute.toLowerCase().replace(/\s/g, '-')}`;
+              return (
+                <li key={inner.label} className="flex items-center">
+                  <Toggle.Root
+                    size="lg"
+                    aria-label={`Toggle ${inner.label}`}
+                    onClick={() => onClickHandler(inner)}
+                    className="w-max bg-primary-400 px-4 flex items-center capitalize"
+                    data-testid={`${dataTestId}-item`}
+                  >
+                    {inner.attribute}: {inner.label}
+                    <Toggle.Icon className="ml-2 capitalize">
+                      <XCircleIcon />
+                    </Toggle.Icon>
+                  </Toggle.Root>
+                </li>
+              );
+            })
+          )}
+        </ul>
+      </div>
     </div>
   );
 };

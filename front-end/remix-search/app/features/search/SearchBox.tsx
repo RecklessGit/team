@@ -16,13 +16,12 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ showButton = true }) => {
   const { query, refine, clear } = useSearchBox();
   const [inputValue, setInputValue] = useState(query);
   const [tipIndex, setTipIndex] = useState(0);
-  const [suggestions, setSuggestions] = useState([]);
+  const [suggestions, setSuggestions] = useState<{ name: string }[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setTipIndex((prevIndex) => {
-        return (prevIndex + 1) % SEARCH_TIPS.length;
-      });
+      setTipIndex((prevIndex) => (prevIndex + 1) % SEARCH_TIPS.length);
     }, 4000);
 
     return () => clearInterval(interval);
@@ -40,8 +39,10 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ showButton = true }) => {
       const response = await fetch(`/autocomplete?query=${value}`);
       const data = await response.json();
       setSuggestions(data.suggestions);
+      setShowSuggestions(true);
     } else {
       setSuggestions([]);
+      setShowSuggestions(false);
     }
   };
 
@@ -50,11 +51,13 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ showButton = true }) => {
   ) => {
     e.preventDefault();
     refine(inputValue);
+    setShowSuggestions(false);
   };
 
   const handleClear = () => {
     setInputValue('');
     setSuggestions([]);
+    setShowSuggestions(false);
     clear();
   };
 
@@ -67,11 +70,12 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ showButton = true }) => {
   const handleSuggestionClick = (suggestion: string) => {
     setInputValue(suggestion);
     setSuggestions([]);
+    setShowSuggestions(false);
     refine(suggestion);
   };
 
   const handleSuggestionKeyDown = (
-    e: React.KeyboardEvent<HTMLLIElement>,
+    e: React.KeyboardEvent<HTMLButtonElement>,
     suggestion: string
   ) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -135,18 +139,20 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ showButton = true }) => {
             </svg>
           </span>
         )}
-        {suggestions.length > 0 && (
+        {showSuggestions && suggestions.length > 0 && (
           <ul className="absolute z-10 w-full mt-2 bg-white border border-gray-300 rounded shadow-lg">
             {suggestions.map((suggestion, index) => (
               <li
                 key={index}
                 className="p-2 border-b last:border-none cursor-pointer"
-                onClick={() => handleSuggestionClick(suggestion.name)}
-                onKeyDown={(e) => handleSuggestionKeyDown(e, suggestion.name)}
-                tabIndex={0}
-                role="button"
               >
-                {suggestion.name} {/* Customize to show relevant fields */}
+                <button
+                  tabIndex={0}
+                  onClick={() => handleSuggestionClick(suggestion?.name)}
+                  onKeyDown={(e) => handleSuggestionKeyDown(e, suggestion.name)}
+                >
+                  {suggestion.name} {/* Customize to show relevant fields */}
+                </button>
               </li>
             ))}
           </ul>
