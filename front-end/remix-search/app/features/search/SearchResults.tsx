@@ -90,7 +90,7 @@ export const SearchResults: FC = () => {
     setIsLargeView((prev) => !prev);
   }, []);
   return (
-    <div className="no-scrollbar">
+    <>
       <ToggleViewButton isLargeView={isLargeView} onToggle={toggleView} />
       {!isFirstPage && <Observer onInView={handleTopInView} className="h-1" />}
       <ScrollArea.Root className="h-[900px]">
@@ -140,6 +140,6 @@ export const SearchResults: FC = () => {
         </ScrollArea.Viewport>
         <ScrollArea.Scrollbar orientation="vertical" />
       </ScrollArea.Root>
-    </div>
+    </>
   );
 };
