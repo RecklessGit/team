@@ -6,6 +6,7 @@ import { useInfiniteHits } from 'react-instantsearch';
 import { useInView } from 'react-intersection-observer';
 import { PokemonCard, PokemonCardProps } from '../../components/PokemonCard';
 import Button from '../../components/ui/Button';
+import ScrollArea from '../../components/ui/ScrollArea';
 
 const LARGE_ITEMS_PER_ROW = 3;
 const SMALL_ITEMS_PER_ROW = 6;
@@ -49,7 +50,12 @@ export const SearchResults: FC = () => {
   const [isLargeView, setIsLargeView] = useState(true);
 
   useEffect(() => {
-    if (results?.hits) {
+    if (results?.page === 0) {
+      setItems(results.hits);
+      if (parentRef.current) {
+        parentRef.current.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    } else if (results?.hits) {
       setItems((prevItems) => {
         const newHits = results.hits.filter(
           (hit) => !prevItems.some((item) => item.objectID === hit.objectID)
@@ -57,7 +63,7 @@ export const SearchResults: FC = () => {
         return [...prevItems, ...newHits];
       });
     }
-  }, [results?.hits, isFirstPage]);
+  }, [results?.page]);
 
   const ITEMS_PER_ROW = isLargeView ? LARGE_ITEMS_PER_ROW : SMALL_ITEMS_PER_ROW;
   const CARD_HEIGHT = isLargeView ? 360 : 220;
@@ -84,55 +90,56 @@ export const SearchResults: FC = () => {
     setIsLargeView((prev) => !prev);
   }, []);
   return (
-    <div className="w-full">
+    <>
       <ToggleViewButton isLargeView={isLargeView} onToggle={toggleView} />
-      <div ref={parentRef} className="h-[800px] overflow-auto relative">
-        {!isFirstPage && (
-          <Observer onInView={handleTopInView} className="h-1" />
-        )}
-        <div
-          className="w-full relative"
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const startIndex = virtualRow.index * ITEMS_PER_ROW;
-            const endIndex = startIndex + ITEMS_PER_ROW;
-            const rowItems = items.slice(startIndex, endIndex);
+      {!isFirstPage && <Observer onInView={handleTopInView} className="h-1" />}
+      <ScrollArea.Root className="h-[900px]">
+        <ScrollArea.Viewport className="w-full relative" ref={parentRef}>
+          <div
+            className="w-full relative"
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const startIndex = virtualRow.index * ITEMS_PER_ROW;
+              const endIndex = startIndex + ITEMS_PER_ROW;
+              const rowItems = items.slice(startIndex, endIndex);
 
-            return (
-              <div
-                key={virtualRow.key}
-                className="absolute top-0 left-0 w-full"
-                style={{
-                  height: `${virtualRow.size}px`,
-                  transform: `translateY(${virtualRow.start}px)`,
-                }}
-              >
-                <div className="flex gap-2">
-                  {rowItems.map((hit, index) => (
-                    <div key={hit.objectID || index} className="flex-1">
-                      {hit && (
-                        <PokemonCard
-                          images={hit.images}
-                          height={CARD_HEIGHT}
-                          width={CARD_WIDTH}
-                        />
-                      )}
-                    </div>
-                  ))}
+              return (
+                <div
+                  key={virtualRow.key}
+                  className="absolute top-0 left-0 w-full"
+                  style={{
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                >
+                  <div className="flex gap-2">
+                    {rowItems.map((hit, index) => (
+                      <div key={hit.objectID || index} className="flex-1">
+                        {hit && (
+                          <PokemonCard
+                            images={hit.images}
+                            height={CARD_HEIGHT}
+                            width={CARD_WIDTH}
+                          />
+                        )}
+                      </div>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            );
-          })}
-        </div>
-        {!isLastPage && (
-          <Observer onInView={handleBottomInView} className="h-1" />
-        )}
-      </div>
-    </div>
+              );
+            })}
+          </div>
+          {!isLastPage && (
+            <Observer onInView={handleBottomInView} className="h-1" />
+          )}
+        </ScrollArea.Viewport>
+        <ScrollArea.Scrollbar orientation="vertical" />
+      </ScrollArea.Root>
+    </>
   );
 };
