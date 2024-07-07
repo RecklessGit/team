@@ -41,9 +41,23 @@ services:
     networks:
       - app-network
 
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    network_mode: host
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+
 networks:
   app-network:
     driver: bridge
 
 volumes:
   typesense-data:
+  caddy_data:
+  caddy_config:

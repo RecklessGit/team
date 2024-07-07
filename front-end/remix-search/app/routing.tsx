@@ -41,14 +41,6 @@ export function routing(serverUrl: string) {
 
       const queryParameters: Record<string, string | number> = {};
 
-      if (routeState.page) {
-        queryParameters.page = routeState.page;
-      }
-
-      if (routeState.query && routeState.query?.length > 0) {
-        queryParameters.query = routeState.query;
-      }
-
       REFINEMENT_ATTRIBUTES.forEach((attribute) => {
         const attributeValue = routeState[attribute];
         if (
@@ -60,18 +52,23 @@ export function routing(serverUrl: string) {
         }
       });
 
+      if (routeState.page) {
+        queryParameters.page = routeState.page;
+      }
+
+      if (routeState.query && routeState.query?.length > 0) {
+        queryParameters.query = routeState.query;
+      }
+
       const queryString = qsModule.stringify(queryParameters, {
         addQueryPrefix: true,
         arrayFormat: 'repeat',
       });
 
-
       return constructEncodedURL(url, '', queryString);
     },
     parseURL({ qsModule, location }: { qsModule: any; location: Location }) {
-      const parse = qsModule.parse(
-        serverUrl?.split('?')?.[0] || location.search.slice(1)
-      );
+      const parse = qsModule.parse(location.search.slice(1));
       const { query = '', page, ...rest } = parse;
 
       const refinements: RouteState = {};
@@ -129,7 +126,7 @@ export function routing(serverUrl: string) {
 export function constructEncodedURL(
   url: string,
   urlParameters: string,
-  queryString: string,
+  queryString: string
 ) {
   const parameterPath = urlParameters ? '/' + urlParameters : '';
   const encodedURL = `${url}${parameterPath}${queryString ? queryString : ''}`;

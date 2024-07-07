@@ -145,14 +145,12 @@ export const SearchBox: React.FC<SearchBoxProps> = ({ showButton = true }) => {
               <li
                 key={index}
                 className="p-2 border-b last:border-none cursor-pointer"
+                tabIndex={0}
+                onClick={() => handleSuggestionClick(suggestion?.name)}
+                onKeyDown={(e) => handleSuggestionKeyDown(e, suggestion.name)}
+                role="button"
               >
-                <button
-                  tabIndex={0}
-                  onClick={() => handleSuggestionClick(suggestion?.name)}
-                  onKeyDown={(e) => handleSuggestionKeyDown(e, suggestion.name)}
-                >
-                  {suggestion.name} {/* Customize to show relevant fields */}
-                </button>
+                {suggestion.name} {/* Customize to show relevant fields */}
               </li>
             ))}
           </ul>

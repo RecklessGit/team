@@ -42,7 +42,6 @@ export const FilterDialog: React.FC = () => {
                 </Dialog.Description>
               </ScrollArea.Viewport>
               <ScrollArea.Scrollbar orientation="vertical" />
-              <ScrollArea.Scrollbar orientation="horizontal" />
             </ScrollArea.Root>
 
             <Dialog.Actions className="flex flex-col">
