@@ -1,11 +1,18 @@
 import { Filter, XIcon } from 'lucide-react';
 import React from 'react';
 import { RefinementList } from '../features/search/RefinementList';
+import { VirtualRefinementList } from '../features/search/VirtualRefinementList';
 import Button from './ui/Button';
 import Dialog from './ui/Dialog';
 import ScrollArea from './ui/ScrollArea';
-import { REFINEMENT_ATTRIBUTES } from '../routing';
-import { VirtualRefinementList } from '../features/search/VirtualRefinementList';
+
+const REFINEMENT_ATTRIBUTES = [
+  'subtypes',
+  'types',
+  'resistances.type',
+  'weaknesses.type',
+  'attacks.name',
+];
 
 export const FilterDialog: React.FC = () => {
   return (

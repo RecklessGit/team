@@ -52,8 +52,13 @@
               exit 1
             }
 
-            echo "Environment setup complete. You are now in the nix-team shell."
 
+            echo "The services are hosted at the following URLs:"
+            echo "Typesense: http://localhost:8108"
+            echo "Typesense Dashboard: http://localhost:8800"
+            echo "Caddy: http://localhost (HTTP), https://localhost (HTTPS)"
+          
+            echo "Environment setup complete. You are now in the nix-team shell."
             echo "Nix-team shell active. Type 'exit' to leave."
           '';
         };

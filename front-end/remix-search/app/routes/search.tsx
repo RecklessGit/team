@@ -7,7 +7,7 @@ import { renderToString } from 'react-dom/server';
 import {
   getServerState,
   InstantSearch,
-  InstantSearchSSRProvider
+  InstantSearchSSRProvider,
 } from 'react-instantsearch';
 import { z } from 'zod';
 import { CurrentRefinementList, FilterDialog } from '../components';
@@ -17,6 +17,7 @@ import { SearchBox } from '../features/search/SearchBox';
 import { SearchResults } from '../features/search/SearchResults';
 import { COLLECTION_NAME, routing } from '../routing';
 import { typesenseEnvSchema, useTypesenseSearchClient } from '../search-client';
+import { SortBy } from '../features/search/SortBy';
 
 interface SearchProps {
   serverState?: Record<string, unknown>;
@@ -46,9 +47,14 @@ export const Search: React.FC<SearchProps> = ({
         future={{ preserveSharedStateOnUnmount: true }}
       >
         <div className="flex flex-col max-w-6xl mx-auto shadow-md rounded p-6 relative gap-4">
-          <Title as="h1" size="3xl">Pokémon Card Search</Title>
+          <Title as="h1" size="3xl">
+            Pokémon Card Search
+          </Title>
           <SearchBox />
-          <FilterDialog />
+          <div className="flex gap-4 justify-end">
+            <FilterDialog />
+            <SortBy />
+          </div>
           <CurrentRefinementList />
           <SearchResults />
         </div>
