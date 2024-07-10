@@ -9,7 +9,7 @@ type RouteState = {
 
 export const COLLECTION_NAME = 'pokemon';
 
-export const REFINEMENT_ATTRIBUTES = [
+const REFINEMENT_ATTRIBUTES = [
   'supertype',
   'subtypes',
   'types',
@@ -52,6 +52,10 @@ export function routing(serverUrl: string) {
         }
       });
 
+      if (routeState.sortBy) {
+        queryParameters.sortBy = routeState.sortBy.toString();
+      }
+
       if (routeState.page) {
         queryParameters.page = routeState.page;
       }
@@ -69,7 +73,7 @@ export function routing(serverUrl: string) {
     },
     parseURL({ qsModule, location }: { qsModule: any; location: Location }) {
       const parse = qsModule.parse(location.search.slice(1));
-      const { query = '', page, ...rest } = parse;
+      const { query = '', page, sortBy = '', ...rest } = parse;
 
       const refinements: RouteState = {};
       REFINEMENT_ATTRIBUTES.forEach((attribute) => {
@@ -81,6 +85,7 @@ export function routing(serverUrl: string) {
       return {
         query,
         page,
+        sortBy,
         ...refinements,
       };
     },
@@ -92,6 +97,7 @@ export function routing(serverUrl: string) {
       const routeState: RouteState = {
         query: indexUiState.query,
         page: indexUiState.page,
+        sortBy: indexUiState.sortBy,
       };
 
       REFINEMENT_ATTRIBUTES.forEach((attribute) => {
@@ -114,6 +120,7 @@ export function routing(serverUrl: string) {
         pokemon: {
           query: routeState.query || '',
           page: routeState.page || 1,
+          sortBy: routeState.sortBy || '',
           refinementList,
         },
       };

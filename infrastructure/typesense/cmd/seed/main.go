@@ -63,7 +63,7 @@ var fields = []api.Field{
 	{Name: fieldNameResistances, Type: fieldTypeArrayObject, Optional: &typesenseTrue, Facet: &typesenseTrue},
 	{Name: fieldNameRarity, Type: fieldTypeString, Optional: &typesenseTrue},
 	{Name: fieldNameFlavorText, Type: fieldTypeString, Optional: &typesenseTrue},
-	//{Name: fieldNameLevel, Type: fieldTypeString},
+	{Name: fieldNameLevel, Type: fieldTypeString, Optional: &typesenseTrue, Sort: &typesenseTrue},
 	//{Name: fieldNameHp, Type: fieldTypeString},
 	//{Name: fieldNameEvolvesFrom, Type: fieldTypeString},
 	//{Name: fieldNameEvolvesTo, Type: fieldTypeArrayString},

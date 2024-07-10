@@ -47,7 +47,7 @@ export const SearchResults: FC = () => {
     useInfiniteHits<Hit<PokemonCardProps>>();
   const parentRef = useRef<HTMLDivElement>(null);
   const [items, setItems] = useState<Hit<PokemonCardProps>[]>([]);
-  const [isLargeView, setIsLargeView] = useState(true);
+  const [isLargeView, setIsLargeView] = useState(false);
 
   useEffect(() => {
     if (results?.page === 0) {
