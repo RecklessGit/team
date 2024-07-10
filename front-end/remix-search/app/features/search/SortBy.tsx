@@ -7,7 +7,6 @@ import { COLLECTION_NAME } from '../../routing';
 export const SortBy = () => {
   const { options, currentRefinement, refine } = useSortBy({
     items: [
-      { value: `${COLLECTION_NAME}/sort`, label: 'Default' },
       { value: `${COLLECTION_NAME}/sort/level:asc`, label: 'Level Ascending' },
       { value: `${COLLECTION_NAME}/sort/level:desc`, label: 'Level Descending' },
     ],

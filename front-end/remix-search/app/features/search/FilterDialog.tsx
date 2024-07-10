@@ -1,10 +1,12 @@
 import { Filter, XIcon } from 'lucide-react';
 import React from 'react';
-import { RefinementList } from '../features/search/RefinementList';
-import { VirtualRefinementList } from '../features/search/VirtualRefinementList';
-import Button from './ui/Button';
-import Dialog from './ui/Dialog';
-import ScrollArea from './ui/ScrollArea';
+import Button from '../../components/ui/Button';
+import Dialog from '../../components/ui/Dialog';
+import ScrollArea from '../../components/ui/ScrollArea';
+import {
+  AccordionRefinementList
+} from './AccordionRefinementList';
+import { VirtualRefinementList } from './VirtualRefinementList';
 
 const REFINEMENT_ATTRIBUTES = [
   'subtypes',
@@ -44,7 +46,10 @@ export const FilterDialog: React.FC = () => {
               <ScrollArea.Viewport className="w-full">
                 <Dialog.Description className="p-2">
                   {REFINEMENT_ATTRIBUTES.map((attribute) => (
-                    <RefinementList key={attribute} attribute={attribute} />
+                    <AccordionRefinementList
+                      key={attribute}
+                      attribute={attribute}
+                    />
                   ))}
                 </Dialog.Description>
               </ScrollArea.Viewport>

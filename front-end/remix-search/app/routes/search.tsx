@@ -13,11 +13,12 @@ import { z } from 'zod';
 import { CurrentRefinementList, FilterDialog } from '../components';
 import { Title } from '../components/typography';
 import { ErrorBoundary } from '../features/search/ErrorBoundary';
+import { RefinementList } from '../features/search/RefinementList';
 import { SearchBox } from '../features/search/SearchBox';
 import { SearchResults } from '../features/search/SearchResults';
+import { SortBy } from '../features/search/SortBy';
 import { COLLECTION_NAME, routing } from '../routing';
 import { typesenseEnvSchema, useTypesenseSearchClient } from '../search-client';
-import { SortBy } from '../features/search/SortBy';
 
 interface SearchProps {
   serverState?: Record<string, unknown>;
@@ -51,6 +52,10 @@ export const Search: React.FC<SearchProps> = ({
             Pokémon Card Search
           </Title>
           <SearchBox />
+          <RefinementList
+            attribute="supertype"
+            className="flex flex-row w-full flex-wrap gap-2"
+          />
           <div className="flex gap-4 justify-end">
             <FilterDialog />
             <SortBy />
