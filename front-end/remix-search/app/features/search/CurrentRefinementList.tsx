@@ -5,8 +5,8 @@ import {
 import { XCircleIcon } from 'lucide-react';
 import React, { memo, useCallback } from 'react';
 import { useCurrentRefinements } from 'react-instantsearch';
-import { Title } from './typography';
-import Toggle from './ui/Toggle';
+import { Title } from '../../components/typography';
+import Toggle from '../../components/ui/Toggle';
 
 interface CurrentRefinementListProps
   extends Omit<CurrentRefinementsConnectorParams, 'transformItems'> {}
@@ -43,7 +43,7 @@ const RefinementsList: React.FC<CurrentRefinementListProps> = (props) => {
         >
           Reset
         </button>
-        <ul className="flex flex-row w-full flex-wrap gap-">
+        <ul className="flex flex-row w-full flex-wrap gap-2">
           {items.map((item) =>
             item.refinements.map((inner) => {
               const dataTestId = `${inner.attribute.toLowerCase().replace(/\s/g, '-')}`;
