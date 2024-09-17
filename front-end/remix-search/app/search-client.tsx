@@ -18,6 +18,7 @@ export const typesenseEnvSchema = z.object({
   TYPESENSE_API_KEY: z.string(),
   TYPESENSE_PROTOCOL: z.string().optional().default('http'),
   TYPESENSE_PORT: z.coerce.number().optional().default(8108),
+  OPENAI_API_KEY: z.string(), // Add this line
 });
 
 type TypesenseSearchClientProps = {

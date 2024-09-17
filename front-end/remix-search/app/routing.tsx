@@ -36,7 +36,7 @@ export function routing(serverUrl: string) {
       routeState: RouteState;
       location: Location;
     }) => {
-      const urlParts = location.href.match(/^(.*?\/search)(\/.*)?/);
+      const urlParts = location.href.match(/^(.*?\/(chat|search))(\/.*)?/);
       const url = urlParts?.[1]?.split('?')[0] ?? './';
 
       const queryParameters: Record<string, string | number> = {};

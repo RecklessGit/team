@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
   typesense:
-    image: typesense/typesense:26.0
+    image: typesense/typesense:27.0
     container_name: typesense
     ports:
       - "8108:8108"
@@ -35,7 +35,7 @@ services:
       - TYPESENSE_API_URL=http://typesense:8108
       - TYPESENSE_API_KEY=Hu52dwsas2AdxdE
     volumes:
-      - ./cards:/cards
+      - ./cmd/seed/cards:/cards
     depends_on:
       - typesense
     networks:
@@ -43,7 +43,7 @@ services:
 
   caddy:
     image: caddy:latest
-    container_name: caddy
+    container_name: caddy_search
     network_mode: host
     ports:
       - "80:80"

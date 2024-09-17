@@ -19,12 +19,15 @@ import { SearchResults } from '../features/search/SearchResults';
 import { SortBy } from '../features/search/SortBy';
 import { COLLECTION_NAME, routing } from '../routing';
 import { typesenseEnvSchema, useTypesenseSearchClient } from '../search-client';
+import { SideNav } from '../features/layout/SideNav';
+import { createConversationModel } from '../search-client';
 
 interface SearchProps {
   serverState?: Record<string, unknown>;
   serverUrl: string;
   apiKey: string;
   nodes: { host: string; protocol: string; port: number }[];
+  conversationModelId?: string;
 }
 
 export const Search: React.FC<SearchProps> = ({
@@ -32,11 +35,14 @@ export const Search: React.FC<SearchProps> = ({
   serverUrl,
   apiKey,
   nodes,
+  conversationModelId,
 }) => {
   const { searchClient } = useTypesenseSearchClient({
     queryBy: 'name,subtypes,supertype,types',
     apiKey,
     nodes,
+    conversation: !!conversationModelId,
+    conversationModelId,
   });
 
   return (
@@ -48,6 +54,7 @@ export const Search: React.FC<SearchProps> = ({
         future={{ preserveSharedStateOnUnmount: true }}
       >
         <div className="flex flex-col max-w-6xl mx-auto shadow-md rounded p-6 relative gap-4">
+          <SideNav />
           <Title as="h1" size="3xl">
             Pokémon Card Search
           </Title>
@@ -83,6 +90,16 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const serverUrl = parsedRequest.data.url;
+
+  // Create conversation model
+  let conversationModelId;
+  try {
+    conversationModelId = await createConversationModel();
+  } catch (error) {
+    console.error('Failed to create conversation model:', error);
+    // You might want to handle this error more gracefully
+  }
+
   const serverState = await getServerState(
     <Search
       serverUrl={serverUrl}
@@ -94,6 +111,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
           protocol: env.TYPESENSE_PROTOCOL,
         },
       ]}
+      conversationModelId={conversationModelId}
     />,
     {
       renderToString,
@@ -109,13 +127,14 @@ export async function loader({ request }: LoaderFunctionArgs) {
       TYPESENSE_PORT: env.TYPESENSE_PORT,
       TYPESENSE_PROTOCOL: env.TYPESENSE_PROTOCOL,
     },
+    conversationModelId,
   });
 }
 
 type LoaderData = SerializeFrom<typeof loader>;
 
 export default function HomePage() {
-  const { serverState, serverUrl, ENV } = useLoaderData<LoaderData>();
+  const { serverState, serverUrl, ENV, conversationModelId } = useLoaderData<LoaderData>();
 
   return (
     <ErrorBoundary>
@@ -131,6 +150,7 @@ export default function HomePage() {
               protocol: ENV.TYPESENSE_PROTOCOL,
             },
           ]}
+          conversationModelId={conversationModelId}
         />
       </div>
     </ErrorBoundary>
